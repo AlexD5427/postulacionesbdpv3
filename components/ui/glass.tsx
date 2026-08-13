@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useCallback, useRef } from 'react';
+import type { ElementType } from 'react';
 import { cx } from '@/lib/utils';
 
 /* ==========================================================================
@@ -26,17 +27,7 @@ function useSpecular<T extends HTMLElement>() {
    GlassCard: panel de vidrio liquido
    ========================================================================== */
 
-export function GlassCard({
-  children,
-  className,
-  variant,
-  edge = false,
-  sheen = false,
-  refract = false,
-  hover = true,
-  as: Tag = 'div',
-  ...rest
-}: {
+interface GlassCardProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
   className?: string;
   variant?: 'pad' | 'pad-lg' | 'frost' | 'solid';
@@ -47,13 +38,25 @@ export function GlassCard({
   /** Capa de refraccion liquida detras del vidrio */
   refract?: boolean;
   hover?: boolean;
-  as?: 'div' | 'article' | 'section' | 'li' | 'aside';
-} & React.HTMLAttributes<HTMLElement>) {
+  as?: ElementType;
+}
+
+export function GlassCard({
+  children,
+  className,
+  variant,
+  edge = false,
+  sheen = false,
+  refract = false,
+  hover = true,
+  as,
+  ...rest
+}: GlassCardProps) {
   const { ref, onMouseMove } = useSpecular<HTMLDivElement>();
+  const Comp: ElementType = as ?? 'div';
 
   return (
-    // @ts-expect-error - Tag dinamico controlado por la union de `as`
-    <Tag
+    <Comp
       ref={ref}
       onMouseMove={onMouseMove}
       className={cx(
@@ -70,7 +73,7 @@ export function GlassCard({
       {refract && <span className="refract__layer" aria-hidden="true" />}
       {sheen && <span className="sheen__bar" aria-hidden="true" />}
       {children}
-    </Tag>
+    </Comp>
   );
 }
 
@@ -78,7 +81,7 @@ export function GlassCard({
    Botones magneticos
    ========================================================================== */
 
-function useMagnet<T extends HTMLElement>(fuerza = 0.28) {
+function useMagnet<T extends HTMLElement>(fuerza = 0.26) {
   const ref = useRef<T | null>(null);
 
   const onMouseMove = useCallback(
@@ -109,7 +112,7 @@ type Tamano = 'sm' | 'md' | 'lg';
 
 interface BotonBase {
   children: React.ReactNode;
-  /** Segunda etiqueta que sube al hacer hover */
+  /** Duplica la etiqueta para el efecto de deslizamiento vertical */
   swap?: boolean;
   variant?: Variante;
   size?: Tamano;
@@ -118,11 +121,17 @@ interface BotonBase {
   className?: string;
 }
 
-function clasesBoton({ variant, size, block, swap, className }: BotonBase) {
+function clasesBoton(
+  variant: Variante | undefined,
+  size: Tamano,
+  block: boolean,
+  swap: boolean,
+  className?: string,
+): string {
   return cx(
     'btn',
     variant && `btn--${variant}`,
-    size && size !== 'md' && `btn--${size}`,
+    size !== 'md' && `btn--${size}`,
     block && 'btn--block',
     swap && 'btn--swap',
     className,
@@ -165,7 +174,7 @@ export function GlassButton({
       ref={ref}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
-      className={clasesBoton({ children, variant, size, block, swap, className })}
+      className={clasesBoton(variant, size, block, swap, className)}
       {...rest}
     >
       <Contenido swap={swap} arrow={arrow}>
@@ -193,7 +202,7 @@ export function GlassLink({
       href={href}
       onMouseMove={onMouseMove}
       onMouseLeave={onMouseLeave}
-      className={clasesBoton({ children, variant, size, block, swap, className })}
+      className={clasesBoton(variant, size, block, swap, className)}
       {...rest}
     >
       <Contenido swap={swap} arrow={arrow}>

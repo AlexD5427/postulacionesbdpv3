@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion, useScroll, useSpring, useTransform } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
+import type { ElementType } from 'react';
 import { cx } from '@/lib/utils';
 
 /* ==========================================================================
@@ -46,26 +47,21 @@ export function useInView<T extends HTMLElement>(options?: { once?: boolean; amo
 
 type RevealVariant = 'up' | 'mask' | 'scale';
 
-export function Reveal({
-  children,
-  delay = 0,
-  variant = 'up',
-  as: Tag = 'div',
-  className,
-  ...rest
-}: {
+interface RevealProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
   delay?: number;
   variant?: RevealVariant;
-  as?: 'div' | 'section' | 'span' | 'li' | 'article' | 'header' | 'p';
+  as?: ElementType;
   className?: string;
-} & React.HTMLAttributes<HTMLElement>) {
+}
+
+export function Reveal({ children, delay = 0, variant = 'up', as, className, ...rest }: RevealProps) {
   const { ref, inView } = useInView<HTMLDivElement>();
+  const Comp: ElementType = as ?? 'div';
   const variantClass = variant === 'mask' ? 'reveal--mask' : variant === 'scale' ? 'reveal--scale' : '';
 
   return (
-    // @ts-expect-error - Tag dinamico controlado por la union de `as`
-    <Tag
+    <Comp
       ref={ref}
       className={cx('reveal', variantClass, className)}
       data-inview={inView ? 'true' : 'false'}
@@ -73,7 +69,7 @@ export function Reveal({
       {...rest}
     >
       {children}
-    </Tag>
+    </Comp>
   );
 }
 
@@ -98,20 +94,29 @@ export function SplitChars({
 
   return (
     <span ref={ref} className={className} data-inview={inView ? 'true' : 'false'} aria-label={text}>
-      {palabras.map((palabra, wi) => (
-        <span key={`${palabra}-${wi}`} style={{ display: 'inline-block', whiteSpace: 'nowrap' }} aria-hidden="true">
-          {Array.from(palabra).map((char, ci) => {
-            const d = delay + indice * step;
-            indice += 1;
-            return (
-              <span key={`${char}-${ci}`} className="split-char" style={{ ['--char-delay' as string]: `${d}s` }}>
-                {char}
+      {palabras.map((palabra, wi) => {
+        const chars = Array.from(palabra).map((char, ci) => {
+          const d = delay + indice * step;
+          indice += 1;
+          return (
+            <span key={`${char}-${ci}`} className="split-char" style={{ ['--char-delay' as string]: `${d}s` }}>
+              {char}
+            </span>
+          );
+        });
+        const espacioDelay = delay + indice * step;
+        if (wi < palabras.length - 1) indice += 1;
+        return (
+          <span key={`${palabra}-${wi}`} style={{ display: 'inline-block', whiteSpace: 'nowrap' }} aria-hidden="true">
+            {chars}
+            {wi < palabras.length - 1 && (
+              <span className="split-char" style={{ ['--char-delay' as string]: `${espacioDelay}s` }}>
+                &nbsp;
               </span>
-            );
-          })}
-          {wi < palabras.length - 1 && <span className="split-char" style={{ ['--char-delay' as string]: `${delay + indice++ * step}s` }}>&nbsp;</span>}
-        </span>
-      ))}
+            )}
+          </span>
+        );
+      })}
     </span>
   );
 }
@@ -219,7 +224,7 @@ export function Marquee({
 }
 
 /* ==========================================================================
-   Parallax: desplazamiento suave ligado al scroll
+   Parallax y escala ligada al scroll
    ========================================================================== */
 
 export function Parallax({
@@ -246,16 +251,14 @@ export function Parallax({
   );
 }
 
-/** Escala suave ligada al scroll, para retratos y paneles de vidrio. */
 export function ScrollScale({ children, className }: { children: React.ReactNode; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'center center'] });
   const scale = useSpring(useTransform(scrollYProgress, [0, 1], [1.14, 1]), { stiffness: 80, damping: 22 });
-  const radius = useTransform(scrollYProgress, [0, 1], [64, 26]);
 
   return (
     <div ref={ref} className={className}>
-      <motion.div style={{ scale, borderRadius: radius, overflow: 'hidden' }}>{children}</motion.div>
+      <motion.div style={{ scale }}>{children}</motion.div>
     </div>
   );
 }
@@ -264,7 +267,15 @@ export function ScrollScale({ children, className }: { children: React.ReactNode
    Rotator: palabras que se reemplazan en vertical
    ========================================================================== */
 
-export function Rotator({ words, interval = 2600, className }: { words: string[]; interval?: number; className?: string }) {
+export function Rotator({
+  words,
+  interval = 2600,
+  className,
+}: {
+  words: string[];
+  interval?: number;
+  className?: string;
+}) {
   const [i, setI] = useState(0);
 
   useEffect(() => {
