@@ -11,16 +11,15 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import { useCandidato } from '@/components/providers/CandidatoProvider';
 import { useI18n } from '@/components/providers/I18nProvider';
 import { GlassLink } from '@/components/ui/glass';
+import { EASE_OUT } from '@/lib/ease';
 import { initials } from '@/lib/utils';
-
-const EASE = [0.16, 1, 0.3, 1] as const;
 
 const ENLACES = [
   { href: '/convocatorias', key: 'nav.convocatorias' },
   { href: '/bolsa', key: 'nav.bolsa' },
   { href: '/evaluaciones', key: 'nav.evaluaciones' },
   { href: '/recursos', key: 'nav.recursos' },
-] as const;
+];
 
 export function SiteHeader() {
   const { t } = useI18n();
@@ -73,7 +72,13 @@ export function SiteHeader() {
           </nav>
 
           <div className="header-actions">
-            <button type="button" className="icon-btn" onClick={abrirPaleta} aria-label={t('nav.commandHint')} title="Ctrl+K">
+            <button
+              type="button"
+              className="icon-btn"
+              onClick={abrirPaleta}
+              aria-label={t('nav.commandHint')}
+              title="Ctrl+K"
+            >
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.9" />
                 <path d="m16.5 16.5 4 4" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" />
@@ -83,7 +88,12 @@ export function SiteHeader() {
             <LanguageSwitcher />
 
             {autenticado ? (
-              <Link href="/panel" className="icon-btn icon-btn--solid" aria-label={t('nav.panel')} style={{ position: 'relative' }}>
+              <Link
+                href="/panel"
+                className="icon-btn icon-btn--solid"
+                aria-label={t('nav.panel')}
+                style={{ position: 'relative' }}
+              >
                 {initials(usuario?.nombre ?? '', usuario?.apellido)}
                 {noLeidas > 0 && <span className="dock__badge">{noLeidas}</span>}
               </Link>
@@ -118,9 +128,12 @@ export function SiteHeader() {
             initial={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }}
             animate={{ opacity: 1, clipPath: 'inset(0 0 0% 0)' }}
             exit={{ opacity: 0, clipPath: 'inset(0 0 100% 0)' }}
-            transition={{ duration: 0.72, ease: EASE }}
+            transition={{ duration: 0.72, ease: EASE_OUT }}
           >
-            <div className="between" style={{ position: 'absolute', top: '1.2rem', left: 'var(--gutter)', right: 'var(--gutter)' }}>
+            <div
+              className="between"
+              style={{ position: 'absolute', top: '1.2rem', left: 'var(--gutter)', right: 'var(--gutter)' }}
+            >
               <BdpLogo name={t('brand.name')} />
               <button type="button" className="icon-btn" onClick={() => setMenu(false)} aria-label={t('nav.closeMenu')}>
                 &#10005;
@@ -134,7 +147,7 @@ export function SiteHeader() {
                     initial={{ y: '110%' }}
                     animate={{ y: '0%' }}
                     exit={{ y: '110%' }}
-                    transition={{ duration: 0.8, delay: 0.06 * i, ease: EASE }}
+                    transition={{ duration: 0.8, delay: 0.06 * i, ease: EASE_OUT }}
                   >
                     <Link href={e.href} className="nav-overlay__link" onClick={() => setMenu(false)}>
                       <i>{String(i + 1).padStart(2, '0')}</i>

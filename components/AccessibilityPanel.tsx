@@ -4,10 +4,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect } from 'react';
 import { useA11y, type Paleta } from '@/components/providers/A11yProvider';
 import { useI18n } from '@/components/providers/I18nProvider';
+import { EASE_OUT } from '@/lib/ease';
 import { LOCALE_META } from '@/lib/i18n/config';
 
 const PALETAS: Paleta[] = ['default', 'deuteranopia', 'protanopia', 'tritanopia', 'monochrome'];
-const EASE = [0.16, 1, 0.3, 1] as const;
 
 /** Boton flotante permanente de accesibilidad. */
 export function AccessibilityFab() {
@@ -52,7 +52,7 @@ export function AccessibilityPanel() {
   } = useA11y();
   const { t, locale } = useI18n();
 
-  // Atajos globales: Alt+A abre el panel, Alt+L lee la pagina.
+  // Atajos globales: Alt+A abre el panel, Alt+L lee la pagina, Esc cierra.
   useEffect(() => {
     const atajo = (event: KeyboardEvent) => {
       if (event.altKey && event.key.toLowerCase() === 'a') {
@@ -61,7 +61,8 @@ export function AccessibilityPanel() {
       }
       if (event.altKey && event.key.toLowerCase() === 'l') {
         event.preventDefault();
-        hablando ? detenerLectura() : leerPagina(locale);
+        if (hablando) detenerLectura();
+        else leerPagina(locale);
       }
       if (event.key === 'Escape' && panelAbierto) setPanelAbierto(false);
     };
@@ -84,26 +85,29 @@ export function AccessibilityPanel() {
           />
           <motion.aside
             key="panel"
-            className="a11y-panel"
+            className="a11y-panel no-print"
             role="dialog"
             aria-modal="true"
             aria-label={t('a11y.title')}
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ duration: 0.55, ease: EASE }}
+            transition={{ duration: 0.55, ease: EASE_OUT }}
           >
             <div className="between" style={{ marginBottom: '0.4rem' }}>
               <h2 className="h3" style={{ color: '#fff' }}>
                 {t('a11y.title')}
               </h2>
-              <button type="button" className="icon-btn" onClick={() => setPanelAbierto(false)} aria-label={t('common.close')}>
+              <button
+                type="button"
+                className="icon-btn"
+                onClick={() => setPanelAbierto(false)}
+                aria-label={t('common.close')}
+              >
                 &#10005;
               </button>
             </div>
-            <p className="muted" style={{ fontSize: 'var(--fs-sm)', color: 'rgba(238,244,252,.6)' }}>
-              {t('a11y.subtitle')}
-            </p>
+            <p style={{ fontSize: 'var(--fs-sm)', color: 'rgba(238,244,252,.6)' }}>{t('a11y.subtitle')}</p>
 
             {/* --- Vision y color ------------------------------------------ */}
             <section className="a11y-group">
@@ -247,9 +251,7 @@ export function AccessibilityPanel() {
             <section className="a11y-group">
               <h3 className="a11y-group__title">{t('a11y.group.voice')}</h3>
               {!ttsSoportado ? (
-                <p className="muted" style={{ fontSize: 'var(--fs-sm)' }}>
-                  {t('a11y.ttsUnsupported')}
-                </p>
+                <p style={{ fontSize: 'var(--fs-sm)', color: 'rgba(238,244,252,.6)' }}>{t('a11y.ttsUnsupported')}</p>
               ) : (
                 <div className="a11y-rows">
                   <div className="a11y-options">
@@ -281,7 +283,7 @@ export function AccessibilityPanel() {
                   </div>
 
                   {!vozNativaDisponible(locale) && (locale === 'qu' || locale === 'ay') && (
-                    <p className="muted" style={{ fontSize: 'var(--fs-xs)' }}>
+                    <p style={{ fontSize: 'var(--fs-xs)', color: 'rgba(238,244,252,.6)' }}>
                       {t('a11y.ttsNoNativeVoice')} ({LOCALE_META[locale].ttsFallback})
                     </p>
                   )}
