@@ -1,0 +1,26 @@
+/* Premium interaction layer: blue institutional surfaces, restrained depth, compositor-only motion. */
+:root{--blue-ink:oklch(18% .045 255);--blue-surface:oklch(25% .065 255);--blue-electric:oklch(70% .16 242);--blue-soft:oklch(82% .08 235);--focus-blue:oklch(78% .16 242);--ease-expo:cubic-bezier(.16,1,.3,1);--ease-in:cubic-bezier(.7,0,.84,0)}
+[data-surface='deep']{--bg:var(--blue-ink);--bg-2:var(--blue-surface)}
+/* Keep animation work on compositor-friendly properties. */
+.glass,.btn,.icon-btn,.dock__item,.list-row,.quiz__opt,.chip,.side-nav__item{will-change:auto;transition-timing-function:var(--ease-expo)}
+.glass-hover:hover{transform:translate3d(0,-5px,0)}
+.btn{min-height:44px;backface-visibility:hidden;transform:translate3d(var(--tx,0px),var(--ty,0px),0);transition:transform 380ms var(--ease-expo),box-shadow 320ms var(--ease-expo),border-color 240ms ease-out,background-color 240ms ease-out,color 180ms ease-out}
+.btn::before{transition:transform 460ms var(--ease-expo);will-change:transform}
+.btn:active{transform:translate3d(var(--tx,0px),calc(var(--ty,0px) + 1px),0) scale(.985);transition-duration:100ms}
+.btn:focus-visible,.icon-btn:focus-visible,.chip:focus-visible,.dock__item:focus-visible{outline:3px solid var(--focus-blue);outline-offset:3px}
+.btn[disabled]{cursor:not-allowed;filter:saturate(.45);transform:none!important}
+.btn__arrow{transition:transform 260ms var(--ease-expo)}
+.btn:hover .btn__arrow{transform:translate3d(5px,0,0)}
+.btn--primary{box-shadow:0 12px 34px -18px oklch(70% .16 242 / .7)}
+.btn--primary:hover{box-shadow:0 18px 44px -18px oklch(70% .16 242 / .8)}
+/* A blue reactive halo appears only on intentional hover/focus. */
+.btn::after{content:'';position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;opacity:0;background:radial-gradient(12rem 5rem at var(--mx,50%) var(--my,50%),oklch(82% .08 235 / .24),transparent 68%);transition:opacity 220ms ease-out}
+.btn:hover::after,.btn:focus-visible::after{opacity:1}
+/* More serious bank UI: less blur, more explicit surface hierarchy. */
+.site-header[data-scrolled='true'],.dock,.cmdk,.a11y-panel{background:oklch(16% .035 255 / .9);backdrop-filter:blur(18px) saturate(130%);-webkit-backdrop-filter:blur(18px) saturate(130%)}
+.site-header[data-scrolled='true']{box-shadow:0 1px 0 oklch(92% .02 240 / .12),0 10px 32px oklch(10% .03 255 / .18)}
+.dock{box-shadow:0 1px 0 oklch(92% .02 240 / .2) inset,0 18px 48px -24px oklch(8% .03 255 / .72)}
+.icon-btn:hover,.chip:hover,.side-nav__item:hover{transform:translate3d(0,-2px,0);border-color:oklch(78% .12 240 / .48)}
+/* Calm motion for touch and reduced-motion users. */
+@media (hover:none){.btn:hover::after,.glass:hover::after{opacity:0}.btn--swap .btn__labels>span:last-child{display:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:1ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:1ms!important}.btn,.glass,.icon-btn,.dock__item,.list-row,.quiz__opt,.chip,.side-nav__item{will-change:auto!important}.cursor-glow{display:none!important}}
