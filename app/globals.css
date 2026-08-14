@@ -1,11 +1,12 @@
 /* ==========================================================================
    BDP TALENTO - CAPA 1: TOKENS, RESET Y TIPOGRAFIA
    Linea de diseno madre: Liquid Glass + editorial ornamentado.
+   Orden de carga: globals.css -> glass.css -> components.css
    ========================================================================== */
 
 :root {
   /* --- Marca BDP ------------------------------------------------------- */
-  --bdp-950: #001ординary;
+  --bdp-950: #00142c;
   --bdp-900: #001c3d;
   --bdp-800: #002d5e;
   --bdp-700: #004282; /* azul institucional oficial */
@@ -61,6 +62,7 @@
   --maxw: 1440px;
   --maxw-text: 68ch;
   --section-y: clamp(5rem, 12vh, 11rem);
+  --header-h: 84px;
 
   /* --- Escala tipografica (fluida) ------------------------------------ */
   --fs-hero: clamp(3rem, 11.5vw, 11rem);
@@ -85,11 +87,11 @@
   --text-scale: 1;
   --line-scale: 1;
   --letter-scale: 0em;
-  --motion-factor: 1;
 
   /* --- Fuentes (inyectadas por next/font, con fallback robusto) ------- */
   --font-display: var(--font-playfair), 'Playfair Display', 'Iowan Old Style', Garamond, Georgia, serif;
-  --font-sans: var(--font-inter), 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-sans: var(--font-inter), 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
 
   color-scheme: dark;
@@ -166,8 +168,8 @@
 
 /* ==========================================================================
    PALETAS PARA DALTONISMO
-   No usamos filtros CSS (rompen position:fixed): remapeamos los tokens de
-   acento a combinaciones seguras segun el tipo de deficiencia.
+   No usamos filtros CSS (rompen position:fixed y backdrop-filter):
+   remapeamos los tokens de acento a combinaciones seguras segun la deficiencia.
    ========================================================================== */
 
 [data-palette='deuteranopia'],
@@ -197,7 +199,7 @@
 
 [data-palette='monochrome'] {
   --bdp-700: #2b3340;
-  --bdp-600: #3b4椅椅;
+  --bdp-600: #3b4552;
   --gold-500: #8e8e8e;
   --gold-400: #b8b8b8;
   --gold-200: #e2e2e2;
@@ -246,7 +248,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
-  font-synthesis-weight: none;
 }
 
 img,
@@ -326,7 +327,7 @@ h2,
 h3 {
   font-family: var(--font-display);
   font-weight: 400;
-  line-height: calc(0.98 * var(--line-scale));
+  line-height: calc(1.02 * var(--line-scale));
   letter-spacing: -0.022em;
   text-wrap: balance;
   color: var(--fg-strong);
@@ -334,7 +335,7 @@ h3 {
 
 .hero-type {
   font-size: var(--fs-hero);
-  line-height: calc(0.86 * var(--line-scale));
+  line-height: calc(0.88 * var(--line-scale));
   letter-spacing: -0.035em;
 }
 
@@ -452,6 +453,10 @@ h4,
   padding-block: clamp(3rem, 7vh, 6rem);
 }
 
+.section-head {
+  position: relative;
+}
+
 .stack {
   display: flex;
   flex-direction: column;
@@ -505,22 +510,20 @@ h4,
 
 .sticky-col {
   position: sticky;
-  top: calc(var(--header-h, 84px) + 2rem);
+  top: calc(var(--header-h) + 2rem);
   align-self: start;
+}
+
+@media (max-width: 1000px) {
+  .sticky-col {
+    position: static;
+  }
 }
 
 .rule {
   height: 1px;
   border: 0;
   background: linear-gradient(90deg, transparent, var(--line-strong) 18%, var(--line-strong) 82%, transparent);
-}
-
-.ornament {
-  display: block;
-  width: 100%;
-  height: 22px;
-  color: var(--accent);
-  opacity: 0.7;
 }
 
 /* ==========================================================================
@@ -582,7 +585,10 @@ h4,
 }
 
 [data-contrast='high'] .glass,
-[data-contrast='high'] .glass-panel {
+[data-contrast='high'] .btn,
+[data-contrast='high'] .input,
+[data-contrast='high'] .select,
+[data-contrast='high'] .textarea {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   border-color: var(--fg) !important;
@@ -590,13 +596,17 @@ h4,
 
 [data-contrast='high'] .decor,
 [data-contrast='high'] .aurora,
-[data-contrast='high'] .grain {
+[data-contrast='high'] .grain,
+[data-contrast='high'] .caustics,
+[data-contrast='high'] .mesh,
+[data-contrast='high'] .andean,
+[data-contrast='high'] .cursor-glow {
   display: none !important;
 }
 
 [data-font='legible'] {
   --font-display: 'Atkinson Hyperlegible', var(--font-sans);
-  --font-sans: 'Atkinson Hyperlegible', 'Verdana', 'Tahoma', sans-serif;
+  --font-sans: 'Atkinson Hyperlegible', Verdana, Tahoma, sans-serif;
   --letter-scale: 0.012em;
 }
 
@@ -610,6 +620,17 @@ h4,
   cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='42' height='42' viewBox='0 0 42 42'%3E%3Cpath d='M6 3 33 19 20 21 15 36z' fill='%23ffffff' stroke='%23004282' stroke-width='2.5'/%3E%3C/svg%3E")
       3 3,
     auto;
+}
+
+/* Pausa global de los fondos decorativos animados */
+[data-backgrounds='paused'] .aurora__blob,
+[data-backgrounds='paused'] .caustics,
+[data-backgrounds='paused'] .grain,
+[data-backgrounds='paused'] .refract__layer,
+[data-backgrounds='paused'] .marquee__track,
+[data-backgrounds='paused'] .liquid-edge::before,
+[data-backgrounds='paused'] .float {
+  animation-play-state: paused !important;
 }
 
 [data-motion='reduced'] *,
@@ -647,14 +668,6 @@ h4,
   border-bottom: 2px solid var(--gold-400);
   background: rgba(201, 162, 39, 0.1);
   box-shadow: 0 0 0 100vmax rgba(3, 7, 15, 0.42);
-  mix-blend-mode: normal;
-}
-
-/* Resaltado del texto leido por el lector de voz */
-.tts-active {
-  background: linear-gradient(180deg, rgba(224, 189, 81, 0.34), rgba(224, 189, 81, 0.16));
-  box-shadow: inset 0 0 0 1px rgba(224, 189, 81, 0.55);
-  border-radius: 6px;
 }
 
 /* ==========================================================================
@@ -683,6 +696,28 @@ html.lenis body {
 }
 
 /* ==========================================================================
+   VISIBILIDAD RESPONSIVA
+   ========================================================================== */
+
+.hide-sm {
+  display: initial;
+}
+
+.hide-lg {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .hide-sm {
+    display: none !important;
+  }
+
+  .hide-lg {
+    display: block;
+  }
+}
+
+/* ==========================================================================
    IMPRESION (usada por el generador de Hoja de Vida)
    ========================================================================== */
 
@@ -693,20 +728,32 @@ html.lenis body {
   .a11y-fab,
   .grain,
   .aurora,
-  .decor {
+  .decor,
+  .caustics,
+  .mesh,
+  .andean,
+  .cursor-glow,
+  .scroll-progress,
+  .footer {
     display: none !important;
   }
 
-  body {
-    background: #fff;
-    color: #000;
+  body,
+  .section {
+    background: #fff !important;
+    color: #000 !important;
+    padding: 0 !important;
   }
 
-  .glass,
-  .glass-panel {
+  .glass {
     background: #fff !important;
     backdrop-filter: none !important;
     border: 1px solid #ccc !important;
     box-shadow: none !important;
+  }
+
+  .cv {
+    box-shadow: none !important;
+    padding: 0 !important;
   }
 }

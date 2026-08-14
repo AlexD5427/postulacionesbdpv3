@@ -1,19 +1,21 @@
 'use client';
 
+import type { CSSProperties } from 'react';
 import { cx } from '@/lib/utils';
 
 /**
  * ---------------------------------------------------------------------------
  * MARCA BDP S.A.M.
  * ---------------------------------------------------------------------------
- * El SVG oficial entregado llegó como fragmento (metadatos de Inkscape y un
- * unico path de una letra), insuficiente para reconstruir el logotipo completo.
- * Se construyo entonces un emblema institucional propio que respeta el color
- * oficial #004282 y la idea de desarrollo productivo: tres barras ascendentes
- * (crecimiento) bajo un arco que evoca el vuelo del condor y el surco andino.
+ * El SVG entregado llego como fragmento (metadatos de Inkscape y un unico path
+ * correspondiente a una letra), insuficiente para reconstruir el logotipo
+ * oficial completo. Se construyo entonces un emblema institucional propio que
+ * respeta el color oficial #004282 y la idea de desarrollo productivo: tres
+ * barras ascendentes (crecimiento) bajo un arco que evoca el vuelo del condor
+ * y el surco andino.
  *
- * Para sustituirlo por el logotipo oficial basta reemplazar el contenido de
- * <BdpMark /> con los paths reales; el resto de la interfaz no cambia.
+ * Para sustituirlo por el logotipo oficial basta reemplazar los paths internos
+ * de <BdpMark />; el resto de la interfaz no cambia.
  * Ver docs/MARCA.md.
  * ---------------------------------------------------------------------------
  */
@@ -22,17 +24,25 @@ export const BDP_AZUL = '#004282';
 
 interface MarkProps {
   className?: string;
+  style?: CSSProperties;
   /** Usa degradado institucional en lugar de color plano */
   gradient?: boolean;
-  /** Color del arco superior */
+  /** Color del arco superior y de la barra mayor */
   accent?: string;
   title?: string;
 }
 
-export function BdpMark({ className, gradient = true, accent = '#E0BD51', title = 'BDP S.A.M.' }: MarkProps) {
+export function BdpMark({
+  className,
+  style,
+  gradient = true,
+  accent = '#E0BD51',
+  title = 'BDP S.A.M.',
+}: MarkProps) {
   return (
     <svg
       className={cx('bdp-mark', className)}
+      style={style}
       viewBox="0 0 64 64"
       role="img"
       aria-label={title}
@@ -51,7 +61,7 @@ export function BdpMark({ className, gradient = true, accent = '#E0BD51', title 
         </linearGradient>
       </defs>
 
-      {/* Contenedor: cuadrado con esquinas suaves, lenguaje de vidrio */}
+      {/* Contenedor: cuadrado de esquinas suaves, lenguaje de vidrio */}
       <rect x="1" y="1" width="62" height="62" rx="17" fill={gradient ? 'url(#bdp-mark-bg)' : BDP_AZUL} />
       <rect x="1" y="1" width="62" height="62" rx="17" fill="url(#bdp-mark-shine)" />
       <rect
@@ -67,13 +77,7 @@ export function BdpMark({ className, gradient = true, accent = '#E0BD51', title 
       />
 
       {/* Arco: condor / surco */}
-      <path
-        d="M13 25.5C20.5 12.5 43.5 12.5 51 22"
-        fill="none"
-        stroke={accent}
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
+      <path d="M13 25.5C20.5 12.5 43.5 12.5 51 22" fill="none" stroke={accent} strokeWidth="3" strokeLinecap="round" />
 
       {/* Barras ascendentes: desarrollo productivo */}
       <rect x="16" y="38" width="8" height="12" rx="4" fill="#ffffff" fillOpacity="0.82" />
@@ -105,7 +109,7 @@ export function BdpLogo({ className, withText = true, name = 'BDP Talento', tagl
   );
 }
 
-/** Emblema en trazo, usado por el preloader para animar el dibujado. */
+/** Emblema en trazo, usado por el preloader para el dibujado animado. */
 export function BdpMarkOutline({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 64 64" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
