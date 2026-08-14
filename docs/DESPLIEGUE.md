@@ -9,7 +9,7 @@ El proyecto es un Next.js 15 estandar: Vercel lo detecta sin configuracion.
    - Framework: Next.js
    - Build: `npm run build`
    - Output: `.next`
-   - Node: 18.18 o superior (definido en `package.json`)
+   - Node: **22.x** (fijado en `package.json` y `.nvmrc`)
 3. **Variables de entorno** (ninguna es obligatoria para el primer despliegue):
 
 | Variable | Necesidad | Descripcion |
@@ -21,19 +21,39 @@ El proyecto es un Next.js 15 estandar: Vercel lo detecta sin configuracion.
 | `DATABASE_URL` | Si `DATA_SOURCE=postgres` | Cadena de conexion |
 | `SMTP_URL`, `ALERTAS_FROM` | Futuro | Envio de alertas por correo |
 
-4. **Desplegar.** Sin variables, la aplicacion arranca en modo semilla con toda
-   la experiencia navegable.
+4. **Desplegar.** Sin variables, la aplicacion arranca en modo semilla con toda la experiencia navegable.
+
+### Diagnostico del log de Vercel
+
+El log que compartiste **no contiene un error de build**: compilo, tipó, genero las 22 paginas y finalizo correctamente. Las lineas `Warning` y `npm warn deprecated` son avisos, no fallos; aun asi se corrigieron para que el siguiente deploy no arrastre versiones inseguras u obsoletas.
+
+- `engines.node >=18.18.0` era demasiado abierto: podia mover el build a un major futuro. Ahora esta fijado a `22.x`, una version disponible y soportada por Vercel.
+- `next@15.3.3` tenia un aviso de seguridad RSC. Se actualizo a `15.5.7`, version parcheada segun el advisory oficial.
+- React se actualizo a `19.1.2`, tambien parcheado.
+- ESLint se actualizo a `9.x` y el script `lint` usa el formato flat config actual; esto elimina la cadena de dependencias obsoletas asociada a ESLint 8 (`inflight`, `rimraf`, `glob`, `@humanwhocodes/*`).
+- Se dejo `.nvmrc` en `22` para que desarrollo local y Vercel usen el mismo major.
+
+Antes de aprobar el PR, corre localmente:
+
+```bash
+npm install
+npm run typecheck
+npm run lint
+npm run build
+```
+
+En Vercel, si el proyecto tiene una version de Node fijada manualmente en Settings, ponla tambien en **22.x** o selecciona **Default** para que respete la configuracion del repositorio.
 
 ---
 
 ## 2. Verificacion previa al merge
 
 ```bash
-npm ci
-npm run build      # debe compilar sin errores
-npm run typecheck  # TypeScript estricto
-npm run lint       # ESLint
-npm run start      # revisar en local la compilacion de produccion
+npm install
+npm run build
+npm run typecheck
+npm run lint
+npm run start
 ```
 
 Lista de comprobacion manual:
@@ -50,32 +70,3 @@ Lista de comprobacion manual:
 - [ ] `Ctrl+K`, `Alt+A`, `Alt+L` y `Esc`.
 - [ ] Movil real: cabecera, menu a pantalla completa y dock.
 - [ ] `prefers-reduced-motion` activo: la pagina sigue usable y sin animacion.
-
----
-
-## 3. Notas de compatibilidad
-
-- **Cabeceras de seguridad** basicas en `next.config.mjs`
-  (`X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`).
-- **`backdrop-filter`** tiene respaldo con `@supports not`: en navegadores sin
-  soporte se pierde el desenfoque, nunca la legibilidad.
-- **`color-mix()` y `@property`** se usan solo para refinamientos visuales; su
-  ausencia degrada el efecto, no la funcionalidad.
-- **Sin imagenes externas:** todo el arte es SVG y CSS, por lo que no hay
-  dominios que autorizar en `next.config`. Si mas adelante se suben fotografias
-  reales, colocarlas en `public/media` y usar `next/image`.
-- **ESLint no bloquea el despliegue** (`eslint.ignoreDuringBuilds`), pero el
-  chequeo de tipos **si**: un error de TypeScript detiene el build a proposito.
-
----
-
-## 4. Alojamiento alternativo
-
-Cualquier plataforma con Node 18+ sirve:
-
-```bash
-npm ci && npm run build && npm run start   # puerto 3000 por defecto
-```
-
-Para exportacion estatica habria que renunciar a ISR y a las rutas
-revalidadas; no es el modo recomendado.
