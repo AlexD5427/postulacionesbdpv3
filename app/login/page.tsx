@@ -1,0 +1,109 @@
+'use client';
+
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { AuthShell } from '@/components/features/AuthShell';
+import { useAuth } from '@/components/providers/AuthProvider';
+import { useI18n } from '@/components/providers/I18nProvider';
+import { useToast } from '@/components/providers/ToastProvider';
+import { GlassButton } from '@/components/ui/glass';
+
+export default function LoginPage() {
+  const { t } = useI18n();
+  const { login } = useAuth();
+  const { toast } = useToast();
+  const router = useRouter();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [enviando, setEnviando] = useState(false);
+
+  const enviar = (event: React.FormEvent) => {
+    event.preventDefault();
+    setEnviando(true);
+    const resultado = login(email, password);
+    setEnviando(false);
+
+    if (!resultado.ok) {
+      setError(resultado.error ?? 'error.generic');
+      return;
+    }
+    setError(null);
+    toast(t('auth.welcome'));
+    router.push('/panel');
+  };
+
+  return (
+    <AuthShell
+      titulo={t('auth.login.title')}
+      subtitulo={t('auth.login.subtitle')}
+      pie={
+        <>
+          {t('auth.noAccount')}{' '}
+          <Link href="/registro" className="link-underline" style={{ color: 'var(--accent)' }}>
+            {t('nav.register')}
+          </Link>
+        </>
+      }
+    >
+      <form onSubmit={enviar} className="stack gap-md" noValidate>
+        <div className="field">
+          <label className="field__label" htmlFor="email">
+            {t('auth.email')}
+          </label>
+          <input
+            id="email"
+            className="input"
+            type="email"
+            autoComplete="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            aria-invalid={error === 'auth.error.email'}
+            placeholder="nombre@correo.com"
+          />
+        </div>
+
+        <div className="field">
+          <label className="field__label" htmlFor="password">
+            {t('auth.password')}
+          </label>
+          <input
+            id="password"
+            className="input"
+            type="password"
+            autoComplete="current-password"
+            required
+            minLength={8}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            aria-invalid={error === 'auth.error.password'}
+          />
+          <span className="field__hint">{t('auth.passwordHint')}</span>
+        </div>
+
+        {error && (
+          <p className="field__error" role="alert">
+            {t(error)}
+          </p>
+        )}
+
+        <div className="between">
+          <label className="check">
+            <input type="checkbox" defaultChecked />
+            <span>{t('auth.remember')}</span>
+          </label>
+          <span className="faint" style={{ fontSize: 'var(--fs-xs)' }}>
+            {t('auth.forgot')}
+          </span>
+        </div>
+
+        <GlassButton type="submit" variant="primary" block arrow disabled={enviando}>
+          {t('auth.submitLogin')}
+        </GlassButton>
+      </form>
+    </AuthShell>
+  );
+}

@@ -1,0 +1,759 @@
+/* ==========================================================================
+   BDP TALENTO - CAPA 1: TOKENS, RESET Y TIPOGRAFIA
+   Linea de diseno madre: Liquid Glass + editorial ornamentado.
+   Orden de carga: globals.css -> glass.css -> components.css
+   ========================================================================== */
+
+:root {
+  /* --- Marca BDP ------------------------------------------------------- */
+  --bdp-950: #00142c;
+  --bdp-900: #001c3d;
+  --bdp-800: #002d5e;
+  --bdp-700: #004282; /* azul institucional oficial */
+  --bdp-600: #0a5596;
+  --bdp-500: #1a6fbd;
+  --bdp-400: #4f9ada;
+  --bdp-300: #8dc0ee;
+  --bdp-100: #d9ecfb;
+
+  /* --- Acentos: oro andino / jade productivo / arcilla ----------------- */
+  --gold-600: #a5811a;
+  --gold-500: #c9a227;
+  --gold-400: #e0bd51;
+  --gold-200: #f4e3ac;
+  --jade-600: #14785c;
+  --jade-500: #1e9e7a;
+  --jade-300: #6fd4b4;
+  --clay-500: #c2643f;
+
+  /* --- Neutros --------------------------------------------------------- */
+  --ink-950: #03070f;
+  --ink-900: #050b16;
+  --ink-800: #08111f;
+  --ink-700: #0c1a2e;
+  --paper-50: #faf8f3;
+  --paper-100: #f3eee4;
+  --paper-200: #e7e0d1;
+  --paper-300: #d5cbb7;
+
+  /* --- Semanticos ------------------------------------------------------ */
+  --ok: var(--jade-500);
+  --warn: #d9a222;
+  --danger: #d8564f;
+  --info: var(--bdp-400);
+
+  /* --- Radios ---------------------------------------------------------- */
+  --r-xs: 8px;
+  --r-sm: 12px;
+  --r-md: 18px;
+  --r-lg: 26px;
+  --r-xl: 38px;
+  --r-2xl: 54px;
+  --r-pill: 999px;
+
+  /* --- Curvas de animacion -------------------------------------------- */
+  --e-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --e-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+  --e-soft: cubic-bezier(0.33, 1, 0.68, 1);
+  --e-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* --- Ritmo espacial -------------------------------------------------- */
+  --gutter: clamp(1.15rem, 4vw, 3.5rem);
+  --maxw: 1440px;
+  --maxw-text: 68ch;
+  --section-y: clamp(5rem, 12vh, 11rem);
+  --header-h: 84px;
+
+  /* --- Escala tipografica (fluida) ------------------------------------ */
+  --fs-hero: clamp(3rem, 11.5vw, 11rem);
+  --fs-display: clamp(2.4rem, 6.4vw, 5.6rem);
+  --fs-h2: clamp(1.9rem, 4.2vw, 3.6rem);
+  --fs-h3: clamp(1.35rem, 2.2vw, 2rem);
+  --fs-h4: clamp(1.1rem, 1.5vw, 1.35rem);
+  --fs-lead: clamp(1.05rem, 1.35vw, 1.35rem);
+  --fs-body: clamp(0.98rem, 1.05vw, 1.06rem);
+  --fs-sm: 0.875rem;
+  --fs-xs: 0.76rem;
+  --tracking-eyebrow: 0.34em;
+
+  /* --- Sombras --------------------------------------------------------- */
+  --sh-soft: 0 2px 8px rgba(3, 7, 15, 0.06), 0 12px 34px rgba(3, 7, 15, 0.08);
+  --sh-lift: 0 18px 60px rgba(3, 7, 15, 0.18);
+  --sh-deep: 0 40px 120px rgba(3, 7, 15, 0.32);
+  --sh-glow-gold: 0 0 0 1px rgba(224, 189, 81, 0.35), 0 18px 60px rgba(201, 162, 39, 0.22);
+  --sh-glow-blue: 0 0 0 1px rgba(79, 154, 218, 0.3), 0 22px 70px rgba(10, 85, 150, 0.32);
+
+  /* --- Escala de accesibilidad (controlada por el panel) --------------- */
+  --text-scale: 1;
+  --line-scale: 1;
+  --letter-scale: 0em;
+
+  /* --- Fuentes (inyectadas por next/font, con fallback robusto) ------- */
+  --font-display: var(--font-playfair), 'Playfair Display', 'Iowan Old Style', Garamond, Georgia, serif;
+  --font-sans: var(--font-inter), 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  color-scheme: dark;
+}
+
+/* ==========================================================================
+   SUPERFICIES: cada seccion declara data-surface y hereda su paleta.
+   Asi logramos el ritmo editorial claro/oscuro sin repetir estilos.
+   ========================================================================== */
+
+[data-surface='dark'] {
+  --bg: var(--ink-900);
+  --bg-2: var(--ink-800);
+  --fg: #eef4fc;
+  --fg-strong: #ffffff;
+  --fg-muted: rgba(238, 244, 252, 0.64);
+  --fg-faint: rgba(238, 244, 252, 0.38);
+  --line: rgba(255, 255, 255, 0.14);
+  --line-strong: rgba(255, 255, 255, 0.26);
+  --glass: rgba(255, 255, 255, 0.06);
+  --glass-2: rgba(255, 255, 255, 0.1);
+  --glass-3: rgba(255, 255, 255, 0.16);
+  --glass-brd: rgba(255, 255, 255, 0.18);
+  --glass-hi: rgba(255, 255, 255, 0.55);
+  --glass-sh: rgba(3, 7, 15, 0.5);
+  --accent: var(--gold-400);
+  --accent-2: var(--bdp-300);
+  --on-accent: var(--ink-900);
+  color-scheme: dark;
+}
+
+[data-surface='light'] {
+  --bg: var(--paper-50);
+  --bg-2: var(--paper-100);
+  --fg: var(--ink-900);
+  --fg-strong: var(--ink-950);
+  --fg-muted: rgba(5, 11, 22, 0.62);
+  --fg-faint: rgba(5, 11, 22, 0.4);
+  --line: rgba(5, 11, 22, 0.12);
+  --line-strong: rgba(5, 11, 22, 0.24);
+  --glass: rgba(255, 255, 255, 0.55);
+  --glass-2: rgba(255, 255, 255, 0.72);
+  --glass-3: rgba(255, 255, 255, 0.88);
+  --glass-brd: rgba(255, 255, 255, 0.9);
+  --glass-hi: rgba(255, 255, 255, 0.95);
+  --glass-sh: rgba(5, 11, 22, 0.12);
+  --accent: var(--bdp-700);
+  --accent-2: var(--gold-600);
+  --on-accent: #ffffff;
+  color-scheme: light;
+}
+
+/* Superficie azul profunda, para bloques institucionales */
+[data-surface='deep'] {
+  --bg: var(--bdp-900);
+  --bg-2: var(--bdp-800);
+  --fg: #eaf3ff;
+  --fg-strong: #ffffff;
+  --fg-muted: rgba(234, 243, 255, 0.68);
+  --fg-faint: rgba(234, 243, 255, 0.42);
+  --line: rgba(255, 255, 255, 0.16);
+  --line-strong: rgba(255, 255, 255, 0.3);
+  --glass: rgba(255, 255, 255, 0.08);
+  --glass-2: rgba(255, 255, 255, 0.13);
+  --glass-3: rgba(255, 255, 255, 0.2);
+  --glass-brd: rgba(255, 255, 255, 0.22);
+  --glass-hi: rgba(255, 255, 255, 0.6);
+  --glass-sh: rgba(0, 20, 45, 0.55);
+  --accent: var(--gold-400);
+  --accent-2: var(--bdp-300);
+  --on-accent: var(--bdp-900);
+  color-scheme: dark;
+}
+
+/* ==========================================================================
+   PALETAS PARA DALTONISMO
+   No usamos filtros CSS (rompen position:fixed y backdrop-filter):
+   remapeamos los tokens de acento a combinaciones seguras segun la deficiencia.
+   ========================================================================== */
+
+[data-palette='deuteranopia'],
+[data-palette='protanopia'] {
+  --gold-500: #e08a1e;
+  --gold-400: #f2a93f;
+  --gold-200: #ffe0b5;
+  --jade-500: #1f7fb8;
+  --jade-300: #7ec4e8;
+  --clay-500: #8a6bd1;
+  --ok: #1f7fb8;
+  --danger: #6b6f76;
+  --warn: #e08a1e;
+}
+
+[data-palette='tritanopia'] {
+  --gold-500: #c2407a;
+  --gold-400: #dc6a9b;
+  --gold-200: #f6cede;
+  --jade-500: #178c9c;
+  --jade-300: #6fd0dc;
+  --clay-500: #8a6bd1;
+  --ok: #178c9c;
+  --danger: #c2407a;
+  --warn: #9a6bb5;
+}
+
+[data-palette='monochrome'] {
+  --bdp-700: #2b3340;
+  --bdp-600: #3b4552;
+  --gold-500: #8e8e8e;
+  --gold-400: #b8b8b8;
+  --gold-200: #e2e2e2;
+  --jade-500: #6f6f6f;
+  --jade-300: #a5a5a5;
+  --clay-500: #7c7c7c;
+  --ok: #8e8e8e;
+  --warn: #a0a0a0;
+  --danger: #5d5d5d;
+}
+
+/* ==========================================================================
+   RESET
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: calc(100% * var(--text-scale));
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  background: var(--bg, var(--ink-900));
+  color: var(--fg, #eef4fc);
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: calc(1.62 * var(--line-scale));
+  letter-spacing: var(--letter-scale);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+img,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+::selection {
+  background: var(--gold-400);
+  color: var(--ink-900);
+}
+
+/* Scrollbar discreta y acorde a la linea de diseno */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(143, 170, 200, 0.45) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(var(--bdp-500), var(--bdp-700));
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+/* ==========================================================================
+   TIPOGRAFIA EDITORIAL
+   ========================================================================== */
+
+.display,
+.h1,
+.h2,
+.h3,
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: calc(1.02 * var(--line-scale));
+  letter-spacing: -0.022em;
+  text-wrap: balance;
+  color: var(--fg-strong);
+}
+
+.hero-type {
+  font-size: var(--fs-hero);
+  line-height: calc(0.88 * var(--line-scale));
+  letter-spacing: -0.035em;
+}
+
+.display {
+  font-size: var(--fs-display);
+}
+
+h1,
+.h1 {
+  font-size: var(--fs-display);
+}
+
+h2,
+.h2 {
+  font-size: var(--fs-h2);
+}
+
+h3,
+.h3 {
+  font-size: var(--fs-h3);
+  letter-spacing: -0.01em;
+}
+
+h4,
+.h4 {
+  font-family: var(--font-sans);
+  font-size: var(--fs-h4);
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  line-height: calc(1.3 * var(--line-scale));
+}
+
+.italic-accent {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7em;
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.eyebrow::before {
+  content: '';
+  width: 1.9rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent));
+}
+
+.eyebrow--plain::before {
+  display: none;
+}
+
+.lead {
+  font-size: var(--fs-lead);
+  line-height: calc(1.55 * var(--line-scale));
+  color: var(--fg-muted);
+  max-width: var(--maxw-text);
+  text-wrap: pretty;
+}
+
+.muted {
+  color: var(--fg-muted);
+}
+
+.faint {
+  color: var(--fg-faint);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   LAYOUT UTILIDADES
+   ========================================================================== */
+
+.container {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.container--narrow {
+  max-width: 1080px;
+}
+
+.section {
+  position: relative;
+  padding-block: var(--section-y);
+  background: var(--bg);
+  color: var(--fg);
+  isolation: isolate;
+}
+
+.section--flush {
+  padding-block: 0;
+}
+
+.section--tight {
+  padding-block: clamp(3rem, 7vh, 6rem);
+}
+
+.section-head {
+  position: relative;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap, 1rem);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--gap, 0.75rem);
+  flex-wrap: wrap;
+}
+
+.between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.grid {
+  display: grid;
+  gap: var(--gap, 1.5rem);
+}
+
+.cols-2 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+}
+
+.cols-3 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+}
+
+.cols-4 {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+}
+
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+}
+
+@media (max-width: 900px) {
+  .split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.sticky-col {
+  position: sticky;
+  top: calc(var(--header-h) + 2rem);
+  align-self: start;
+}
+
+@media (max-width: 1000px) {
+  .sticky-col {
+    position: static;
+  }
+}
+
+.rule {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(90deg, transparent, var(--line-strong) 18%, var(--line-strong) 82%, transparent);
+}
+
+/* ==========================================================================
+   ACCESIBILIDAD BASE
+   ========================================================================== */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 50%;
+  translate: -50% -220%;
+  z-index: 9999;
+  padding: 0.7rem 1.2rem;
+  border-radius: var(--r-pill);
+  background: var(--gold-400);
+  color: var(--ink-900);
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  transition: translate 0.34s var(--e-back);
+}
+
+.skip-link:focus-visible {
+  translate: -50% 0;
+}
+
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--gold-400);
+  outline-offset: 3px;
+  border-radius: var(--r-xs);
+}
+
+[data-links='underline'] main a:not(.btn):not(.no-underline) {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+}
+
+[data-contrast='high'] {
+  --fg-muted: var(--fg);
+  --fg-faint: var(--fg);
+  --line: var(--fg);
+  --line-strong: var(--fg);
+  --glass: color-mix(in srgb, var(--bg) 92%, transparent);
+  --glass-2: color-mix(in srgb, var(--bg) 96%, transparent);
+  --glass-3: var(--bg);
+  --glass-brd: var(--fg);
+}
+
+[data-contrast='high'] .glass,
+[data-contrast='high'] .btn,
+[data-contrast='high'] .input,
+[data-contrast='high'] .select,
+[data-contrast='high'] .textarea {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-color: var(--fg) !important;
+}
+
+[data-contrast='high'] .decor,
+[data-contrast='high'] .aurora,
+[data-contrast='high'] .grain,
+[data-contrast='high'] .caustics,
+[data-contrast='high'] .mesh,
+[data-contrast='high'] .andean,
+[data-contrast='high'] .cursor-glow {
+  display: none !important;
+}
+
+[data-font='legible'] {
+  --font-display: 'Atkinson Hyperlegible', var(--font-sans);
+  --font-sans: 'Atkinson Hyperlegible', Verdana, Tahoma, sans-serif;
+  --letter-scale: 0.012em;
+}
+
+[data-font='legible'] .hero-type,
+[data-font='legible'] .display {
+  letter-spacing: 0;
+}
+
+[data-cursor='large'],
+[data-cursor='large'] * {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='42' height='42' viewBox='0 0 42 42'%3E%3Cpath d='M6 3 33 19 20 21 15 36z' fill='%23ffffff' stroke='%23004282' stroke-width='2.5'/%3E%3C/svg%3E")
+      3 3,
+    auto;
+}
+
+/* Pausa global de los fondos decorativos animados */
+[data-backgrounds='paused'] .aurora__blob,
+[data-backgrounds='paused'] .caustics,
+[data-backgrounds='paused'] .grain,
+[data-backgrounds='paused'] .refract__layer,
+[data-backgrounds='paused'] .marquee__track,
+[data-backgrounds='paused'] .liquid-edge::before,
+[data-backgrounds='paused'] .float {
+  animation-play-state: paused !important;
+}
+
+[data-motion='reduced'] *,
+[data-motion='reduced'] *::before,
+[data-motion='reduced'] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Guia de lectura (regla horizontal que sigue el cursor) */
+.reading-guide {
+  position: fixed;
+  left: 0;
+  right: 0;
+  height: 2.6rem;
+  z-index: 8000;
+  pointer-events: none;
+  border-top: 2px solid var(--gold-400);
+  border-bottom: 2px solid var(--gold-400);
+  background: rgba(201, 162, 39, 0.1);
+  box-shadow: 0 0 0 100vmax rgba(3, 7, 15, 0.42);
+}
+
+/* ==========================================================================
+   LENIS (scroll suave) - estilos minimos requeridos
+   ========================================================================== */
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* ==========================================================================
+   VISIBILIDAD RESPONSIVA
+   ========================================================================== */
+
+.hide-sm {
+  display: initial;
+}
+
+.hide-lg {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .hide-sm {
+    display: none !important;
+  }
+
+  .hide-lg {
+    display: block;
+  }
+}
+
+/* ==========================================================================
+   IMPRESION (usada por el generador de Hoja de Vida)
+   ========================================================================== */
+
+@media print {
+  .no-print,
+  .site-header,
+  .dock,
+  .a11y-fab,
+  .grain,
+  .aurora,
+  .decor,
+  .caustics,
+  .mesh,
+  .andean,
+  .cursor-glow,
+  .scroll-progress,
+  .footer {
+    display: none !important;
+  }
+
+  body,
+  .section {
+    background: #fff !important;
+    color: #000 !important;
+    padding: 0 !important;
+  }
+
+  .glass {
+    background: #fff !important;
+    backdrop-filter: none !important;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+  }
+
+  .cv {
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+}
