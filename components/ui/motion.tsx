@@ -2,7 +2,8 @@
 
 import { AnimatePresence, motion, useScroll, useSpring, useTransform } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
-import type { ElementType } from 'react';
+import type { CSSProperties, ElementType } from 'react';
+import { EASE_OUT } from '@/lib/ease';
 import { cx } from '@/lib/utils';
 
 /* ==========================================================================
@@ -16,6 +17,7 @@ export function useInView<T extends HTMLElement>(options?: { once?: boolean; amo
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    // Sin IntersectionObserver (navegadores muy antiguos) mostramos todo.
     if (typeof IntersectionObserver === 'undefined') {
       setInView(true);
       return;
@@ -55,17 +57,21 @@ interface RevealProps extends React.HTMLAttributes<HTMLElement> {
   className?: string;
 }
 
-export function Reveal({ children, delay = 0, variant = 'up', as, className, ...rest }: RevealProps) {
+export function Reveal({ children, delay = 0, variant = 'up', as, className, style, ...rest }: RevealProps) {
   const { ref, inView } = useInView<HTMLDivElement>();
   const Comp: ElementType = as ?? 'div';
   const variantClass = variant === 'mask' ? 'reveal--mask' : variant === 'scale' ? 'reveal--scale' : '';
+
+  // El retardo viaja como variable CSS y se fusiona con el estilo del llamador,
+  // de modo que pasar `style` nunca cancela la animacion.
+  const estilo: CSSProperties = { ['--reveal-delay' as string]: `${delay}s`, ...style };
 
   return (
     <Comp
       ref={ref}
       className={cx('reveal', variantClass, className)}
       data-inview={inView ? 'true' : 'false'}
-      style={{ ['--reveal-delay' as string]: `${delay}s` }}
+      style={estilo}
       {...rest}
     >
       {children}
@@ -292,7 +298,7 @@ export function Rotator({
           initial={{ y: '105%', opacity: 0, filter: 'blur(8px)' }}
           animate={{ y: '0%', opacity: 1, filter: 'blur(0px)' }}
           exit={{ y: '-105%', opacity: 0, filter: 'blur(8px)' }}
-          transition={{ duration: 0.72, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.72, ease: EASE_OUT }}
         >
           {words[i]}
         </motion.span>

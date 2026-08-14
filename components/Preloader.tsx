@@ -5,26 +5,31 @@ import { useCallback, useEffect, useState } from 'react';
 import { BdpMarkOutline } from '@/components/brand/BdpLogo';
 import { useI18n } from '@/components/providers/I18nProvider';
 import { useA11y } from '@/components/providers/A11yProvider';
+import { EASE_OUT } from '@/lib/ease';
 
 const CLAVE_SESION = 'bdp-preloader-visto';
-const EASE = [0.16, 1, 0.3, 1] as const;
 
 /**
- * Animacion de bienvenida: "Trabaja en BDP S.A.M." con el emblema dibujandose.
- * Aparece una vez por sesion, se puede saltar con clic o tecla y respeta la
- * preferencia de movimiento reducido (en ese caso no se muestra).
+ * Animacion de bienvenida: "Trabaja en BDP S.A.M." con el emblema apareciendo.
+ * - Se muestra una sola vez por sesion del navegador.
+ * - Se puede saltar con clic, tecla o rueda.
+ * - No aparece si el usuario pidio movimiento reducido.
  */
 export function Preloader() {
   const { t } = useI18n();
   const { settings } = useA11y();
   const [visible, setVisible] = useState(false);
-  const [listo, setListo] = useState(false);
+  const [montado, setMontado] = useState(false);
 
   useEffect(() => {
-    setListo(true);
+    setMontado(true);
     if (settings.movimientoReducido) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    if (sessionStorage.getItem(CLAVE_SESION)) return;
+    try {
+      if (sessionStorage.getItem(CLAVE_SESION)) return;
+    } catch {
+      return; // modo privado sin sessionStorage: no bloqueamos la pagina
+    }
     setVisible(true);
     document.documentElement.style.overflow = 'hidden';
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -53,7 +58,7 @@ export function Preloader() {
     };
   }, [visible, cerrar]);
 
-  if (!listo) return null;
+  if (!montado) return null;
 
   const palabras = t('brand.claim').split(' ');
 
@@ -66,10 +71,10 @@ export function Preloader() {
           aria-live="polite"
           onClick={cerrar}
           initial={{ opacity: 1 }}
-          exit={{ clipPath: 'inset(0 0 100% 0)', opacity: 1 }}
-          transition={{ duration: 1.05, ease: EASE }}
+          exit={{ clipPath: 'inset(0 0 100% 0)' }}
+          transition={{ duration: 1.05, ease: EASE_OUT }}
         >
-          {/* Halos de luz que se expanden detras del emblema */}
+          {/* Halo de luz que se expande detras del emblema */}
           <motion.span
             aria-hidden="true"
             style={{
@@ -82,22 +87,16 @@ export function Preloader() {
             }}
             initial={{ scale: 0.4, opacity: 0 }}
             animate={{ scale: 1.1, opacity: 1 }}
-            transition={{ duration: 2.2, ease: EASE }}
+            transition={{ duration: 2.2, ease: EASE_OUT }}
           />
 
           <div className="preloader__inner">
             <motion.div
-              initial={{ scale: 0.86, opacity: 0, rotate: -8 }}
-              animate={{ scale: 1, opacity: 1, rotate: 0 }}
-              transition={{ duration: 1.1, ease: EASE }}
+              initial={{ scale: 0.86, opacity: 0, rotate: -8, filter: 'blur(10px)' }}
+              animate={{ scale: 1, opacity: 1, rotate: 0, filter: 'blur(0px)' }}
+              transition={{ duration: 1.2, ease: EASE_OUT }}
             >
-              <motion.div
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
-                transition={{ duration: 1.4, ease: 'easeInOut' }}
-              >
-                <BdpMarkOutline className="preloader__logo" />
-              </motion.div>
+              <BdpMarkOutline className="preloader__logo" />
             </motion.div>
 
             <h1 className="preloader__title">
@@ -106,7 +105,7 @@ export function Preloader() {
                   <motion.span
                     initial={{ y: '110%', opacity: 0 }}
                     animate={{ y: '0%', opacity: 1 }}
-                    transition={{ duration: 0.9, delay: 0.35 + i * 0.11, ease: EASE }}
+                    transition={{ duration: 0.9, delay: 0.35 + i * 0.11, ease: EASE_OUT }}
                   >
                     {palabra}
                   </motion.span>
@@ -118,7 +117,7 @@ export function Preloader() {
               className="preloader__sub"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.9, ease: EASE }}
+              transition={{ duration: 0.8, delay: 0.9, ease: EASE_OUT }}
             >
               {t('brand.tagline')}
             </motion.p>
@@ -127,7 +126,7 @@ export function Preloader() {
               <motion.i
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
-                transition={{ duration: 2.5, ease: [0.4, 0, 0.2, 1] }}
+                transition={{ duration: 2.5, ease: 'easeInOut' }}
               />
             </div>
           </div>
